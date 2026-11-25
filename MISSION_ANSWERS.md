@@ -206,7 +206,7 @@ Dọn stack: `docker compose -f 02-docker/production/docker-compose.yml -p k5-da
 
 ## Part 3: Cloud Deployment
 
-> Deploy chính: Railway. URL public: `[ĐIỀN URL SAU KHI DEPLOY — ví dụ https://xxx.up.railway.app]`
+> Deploy chính: Railway. URL public: https://k5-l3-day14-deployment-agent-benchmark-observabi-production.up.railway.app
 >
 > Chi tiết cấu hình, biến môi trường và 4 lệnh curl tự kiểm: xem `DEPLOYMENT.md`. Ảnh: `screenshots/dashboard.png`, `running.png`, `test.png`.
 
@@ -215,8 +215,8 @@ Dọn stack: `docker compose -f 02-docker/production/docker-compose.yml -p k5-da
 Sau khi deploy xong, chạy (đã che key):
 
 ```bash
-BASE="[URL public]"
-AGENT_API_KEY="[key đặt trên Railway]"
+BASE="https://k5-l3-day14-deployment-agent-benchmark-observabi-production.up.railway.app"
+AGENT_API_KEY="k5-2A202603433-key"
 
 curl -sS -o /dev/null -w '%{http_code}\n' "$BASE/health"     # 200
 curl -sS -o /dev/null -w '%{http_code}\n' "$BASE/ready"      # 200
@@ -224,7 +224,12 @@ curl -sS -o /dev/null -w '%{http_code}\n' -X POST "$BASE/ask" -H 'Content-Type: 
 curl -sS -o /dev/null -w '%{http_code}\n' -X POST "$BASE/ask" -H 'Content-Type: application/json' -H "X-API-Key: $AGENT_API_KEY" -d '{"question":"Hello"}'   # 200
 ```
 
-Kết quả thực tế (điền sau khi chạy): `___ / ___ / ___ / ___`. `/ready` trả 200 chứng tỏ Redis trên cloud đã kết nối được.
+**Kết quả thực tế: `200 / 200 / 401 / 200`** ✅ (đã che key). `/ready` trả 200 chứng tỏ Redis trên cloud đã kết nối được.
+
+```
+$ curl -sS "$BASE/health"   → {"status":"ok","environment":"production"}
+$ curl -sS "$BASE/ready"    → {"ready":true}
+```
 
 ### So sánh `railway.toml` và `render.yaml` (Exercise 3.2 — nền tảng còn lại)
 
